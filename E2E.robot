@@ -36,24 +36,59 @@ Library     database.py
     @{response_checkin} =  APIcalls.check_checkin
     Should Be Equal     ${response_checkin}[0]     success     Checkin API Failed, request response is ${response_checkin}[1]
 
-# 05. get order
+05. To check the working of Get Order API
+    log to console      \n Entering payload and calling the get order API
+    @{response_checkin} =  APIcalls.check_get_order_api
+    Should Be Equal     ${response_checkin}[0]     success     Checkin API Failed, request response is ${response_checkin}[1]
 
-07. To check working of Order Allocated API
+06. To check working of Order Allocated API
     log to console      \n Entering payload and calling the Order Allocated API
     @{response_order_allocated} =   APIcalls.check_order_allocated_api
     Should Be Equal     ${response_order_allocated}[0]     success     Order Allocated API Failed, request response is ${response_order_allocated}[1]
 
-08. To check the order status in DB after allocating the order
+07. To check the order status in DB after allocating the order
     ${order_status_in_DB} =         APIcalls.check_order_status_in_DB
     log to console      \n checking the order status after allocating the order
     Should Be Equal     ${order_status_in_DB}     3     The order_status in the DB after allocating the order is not 3 but ${order_status_in_DB}
 
-09. To check working of Order Reached API
+08. To check working of Order Reached API
     log to console      \n Entering payload and calling the Order Reached API
     @{response_order_reached} =   APIcalls.check_order_reached_api
     Should Be Equal     ${response_order_reached}[0]     success     Order Allocated API Failed, request response is ${response_order_reached}[1]
 
-10. To check the order status in DB after the order Reaches (Order Reach API)
+09. To check the order status in DB after the order Reaches (Order Reach API)
     log to console      \n checking the order status after the order Reaches (Order Reach API)
     ${order_status_in_DB} =         APIcalls.check_order_status_in_DB
     Should Be Equal     ${order_status_in_DB}     4     The order_status in the DB after the order reaches is not 4 but ${order_status_in_DB}
+
+10. To check working of Order to Deliver API
+    log to console      \n Entering payload and calling the Order to Deliver API
+    @{response_order_to_deliver} =   APIcalls.check_order_to_deliver_api
+    Should Be Equal     ${response_order_to_deliver}[0]     success     Order to Deliver API Failed, request response is ${response_order_to_deliver}[1]
+    log to console      The order to deliver API is successfully passed
+
+11. To check the order status in DB after the order to deliver API (pick order) is completed
+    log to console      \n checking the order status after the order is picked
+    ${order_status_in_DB} =         APIcalls.check_order_status_in_DB
+    Should Be Equal     ${order_status_in_DB}     5     The order_status in the DB after the order is picked is not 5 but ${order_status_in_DB}
+
+12. To check working of Order Full Delivery Prepaid API
+    log to console      \n Entering payload and calling the Full Delivery Prepaid API
+    @{response_order_full_delivery_prepaid} =   APIcalls.check_order_full_delivery_prepaid_api
+    Should Be Equal     ${response_order_full_delivery_prepaid}[0]     success     Order full Delivery Prepaid API Failed, request response is ${response_order_full_delivery_prepaid}[1]
+    log to console      The order full delivery prepaid API is successfully passed
+
+13. To check the order status in DB after the order full deliver prepaid API is completed
+    log to console      \n checking the order status after the order full delivered (prepaid)
+    ${order_status_in_DB} =         APIcalls.check_order_status_in_DB
+    Should Be Equal     ${order_status_in_DB}     6     The order_status in the DB after the order is picked is not 6 but ${order_status_in_DB}
+
+14. To check the working of create order API in Shipsy
+    log to console      \n checking the working of Create Order API in Shipsy
+    @{response_create_order_shipsy} =       APIcalls.check_create_order_api_shipsy
+    Should Be Equal      ${response_create_order_shipsy}[0]    true    The Create order Shipsy API has failed and the response is ${response_create_order_shipsy}[1]
+
+15. To check the working of update order API in Shipsy
+    log to console      \n checking the working of Update Order API in Shipsy
+    @{response_update_order_shipsy} =       APIcalls.check_update_order_api_shipsy
+    Should Be Equal      ${response_update_order_shipsy}[0]    true    The Update Order Shipsy API has failed and the response is ${response_update_order_shipsy}[1]

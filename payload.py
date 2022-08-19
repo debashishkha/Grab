@@ -1,6 +1,7 @@
 import string
 import time
 import random
+import json
 
 
 random_word = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
@@ -26,8 +27,8 @@ create_payload = """<QueueMessage>
           "merchant_id": "7890",
           "order_mode": null,
           "cust_name": "Debashish Kha",
-          "cust_address_line1": "The Summit Business Bay (Omkar)Andheri - Kurla Rd, Adjacent to Cinemax, Chakala,",
-          "cust_address_line2": "Andheri East, Mumbai, Maharashtra 400069",
+          "cust_address_line1": "102 Parvati Premises Sunmill Compound Lower Parel Mumbai",
+          "cust_address_line2": "lower Parel West, Mumbai, Maharashtra, 400013",
           "cust_landmark": "",
           "cust_contact": "9029668326",
           "cust_lat": "0",
@@ -147,6 +148,314 @@ order_reached_payload = '[{"callName":"processorder"},{"inputData":{"uName":"G15
                         '"passedQRCriteria":"","appversion":"7.0.0.18","appSource":"2","deviceImei":' \
                         '"869184048593711","sid":"535ffc573b7077893363680c8860afb6374","clientId":"2460"}}]'
 
+order_to_deliver_payload = '[{"callName":"processorder"},{"inputData":{"uName":"G156775","orderId":"{order_id}",' \
+                    '"billNo":"AutomateDeliveryG5QLF","amount":"460","restaurantId":"7890",' \
+                    '"uLat":"19.424388333333333","uLong":"72.82647166666668","status":"5","accept":' \
+                    '"1587533552633","reached":"1587533584000","todeliver":"1587533584000","datetime":' \
+                    '"1660893668764","appversion":"7.0.0.18","comment":"","packageId":"0",' \
+                    '"deviceImei":"869184048593711","pickOtp":"","appSource":"2","isLastOrder":"0",' \
+                    '"sid":"535ffc573b7077893363680c8860afb6374","customerInfo":' \
+                    '{"add1":"Summit Bussiness Bay","add2":"Andheri","landmark":"PVR cinemas",' \
+                    '"dareaId":"1233","dareaName":"Scindia Society Andheri East","name":"Nikita",' \
+                    '"phone":"9029668326,32148071","clientId":"2460"}}}]'
 
+order_to_deliver_header = {"X-Public": "a9b6886626ca9b4f5dc2391378e5a19dd0615e05369e9cba670ad20f1958086d",
+                           "X-Hash": "f296245ca97594d9245c76d0e7656b6916e26584b14cb833643ed12a2150a8ce",
+                           "Content-Type": "application/json"}
 
+order_full_delivery_prepaid_payload = '[{"callName":"processorder"},{"inputData":{"uName":"G156775","appversion":' \
+                             '"7.0.0.18","datetime":"1587534066000","deviceImei":"869184048593711","status":' \
+                             '"6","orderId":"{order_id}","billNo":"jio-12","amount":"460","uLat":"19.4245536",' \
+                             '"uLong":"72.8262403","accept":"1587533995000","reached":"1587534001000",' \
+                             '"todeliver":"1587534001000","delivered":"1587534066000","toReturn":"",' \
+                             '"returnedToDC":"","partialDeliver":"","packageId":"0","opDetails":' \
+                             '"Washing Powder Nirma - 5 kg Pouch,Paras Royal Rice- 25 kg,Paras Royal Rice- 25 ' \
+                             'kg","ohc":"","simdata":"","geofence_delivered":"0","receivingcustomerName":"",' \
+                             '"receivingcustomerPhone":"","ideaMobileNo":"","orderItemDetails":' \
+                             '"[{\"category\":\"Detergent Powder\",\"item_id\":\"100\",\"grab_item_id\":\"\",' \
+                             '\"is_food\":\"0\",\"item_name\":\"Washing Powder Nirma - 5 kg Pouch\",\
+                             "unit_price\":\"20.00\",\"quantity\":\"3\",\"isChecked\":\"1\",\"reasonId\":\"\"' \
+                             ',\"reasonDesc\":\"\",\"deliverCount\":\"3\",\"rejectCount\":\"0\"},' \
+                             '{\"category\":\"Rice\",\"item_id\":\"101\",\"grab_item_id\":\"\",\"is_food\":' \
+                             '\"0\",\"item_name\":\"Paras Royal Rice- 25 kg\",\"unit_price\":\"50.00\",' \
+                             '\"quantity\":\"4\",\"isChecked\":\"1\",\"reasonId\":\"\",\"reasonDesc\":\"\",' \
+                             '\"deliverCount\":\"4\",\"rejectCount\":\"0\"},{\"category\":\"Rice\",\"item_id\
+                             ":\"103\",\"grab_item_id\":\"\",\"is_food\":\"0\",\"item_name\":\
+                             "Paras Royal Rice- 25 kg\",\"unit_price\":\"50.00\",\"quantity\":\"4\",' \
+                             '\"isChecked\":\"1\",\"reasonId\":\"\",\"reasonDesc\":\"\",\"deliverCount\":' \
+                             '\"4\",\"rejectCount\":\"0\"}]","relationShip":"","idProofType":"","idProofNo":' \
+                             '"","modeType":"","modeId1":"","modeId2":"","mode1Amt":"","mode2Amt":"",' \
+                             '"expiryDate":"","deliveryAt":"","empId":"","fmComment":"","reason":"0",' \
+                             '"sorryCardNo":"","shipmentPickedCount":"","appSource":"2","isLastOrder":"0",' \
+                             '"deliverOtpNotLandingReasonId":"0","isProcessingLastForwardOrderOfAWaypoint":' \
+                             '"0","sid":"535ffc573b7077893363680c8860afb6374","clientId":"2460"}}]'
 
+order_full_delivery_prepaid_header = {"X-Public": "a9b6886626ca9b4f5dc2391378e5a19dd0615e05369e9cba670ad20f1958086d",
+                               "X-Hash": "ef438b10f1b70211b580c7bbcffc031efc998452d43a57a1262ca619b016e3eb",
+                               "Content-Type": "application/json"}
+
+shipsy_create_order_payload = """{
+    "TripId": "{order_id}",
+    "TripDetails": [
+        {
+            "SequenceNo": 0,
+            "Activity": "O",
+            "Loc": "13456",
+            "LocationName": "QWIK Supply Chain Private Ltd,Warehouse At Gd Logi Ring Rd No3 Nr Rail",
+            "contactNo": null,
+            "Name1": null,
+            "Address1": "QWIK Supply Chain Private Ltd,Warehouse At Gd Logi Ring Rd No3 Nr Rail",
+            "Address2": "Bridge Vlg Giroud Industrial Area Sil,",
+            "Address3": null,
+            "Pincode": "492001",
+            "Phone": "9029668326",
+            "Latitude": 21.2917,
+            "Longitude": 81.7036
+        },
+        {
+            "SequenceNo": 1,
+            "Activity": "P",
+            "Loc": "RPR001",
+            "LocationName": "Unnamed Road, Musra Khurd, Chh",
+            "contactNo": "7738847497",
+            "Name1": "Faishon house",
+            "Address1": "Unnamed Road, Musra Khurd, Chh",
+            "Address2": "null,India",
+            "Address3": null,
+            "Pincode": "491445",
+            "Phone": "9029668326",
+            "Latitude": 0,
+            "Longitude": 0,
+            "DirectDispatch":1,
+            "StageData": [
+                {
+                    "SequenceNo": 1,
+                    "ConsignmentNo": "CN001",
+                    "NumberOfHU": [
+                        "ITEM00",
+                        "ITEM01"
+                    ],
+                    "EwaybillFlag": null,
+                    "Netvalue": "2000",
+                    "amountToCollect": "1000",
+                    "BUTag": "NETMEDS",
+                    "EwaybillExpirationDate": "2021-05-24",
+                    "OriginStateCode": "HR",
+                    "DestinationStateCode": "CT",
+                    "ConsignorCode": "R812",
+                    "ConsigneeCode": "9424115815",
+                    "MovementType": "CON",
+                    "LegType": "JTC",
+                    "CNDIRECTION": "R"
+                }
+            ]
+        },
+        {
+            "SequenceNo": 2,
+            "Activity": "D",
+            "Loc": "RPR001",
+            "LocationName": "Unnamed Road, Musra Khurd, Chh",
+            "contactNo": "7738847497",
+            "Name1": "Faishon house",
+            "Address1": "Unnamed Road, Musra Khurd, Chh",
+            "Address2": "null,India",
+            "Address3": null,
+            "Pincode": "491445",
+            "Phone": "9029668326",
+            "Latitude": 0,
+            "Longitude": 0,
+            "DirectDispatch":0,
+            "StageData": [
+                {
+                    "SequenceNo": 2,
+                    "ConsignmentNo": "CN002",
+                    "NumberOfHU": [
+                        "ITEM02",
+                        "ITEM03"
+                    ],
+                    "EwaybillFlag": null,
+                    "Netvalue": "2000",
+                    "amountToCollect": "1000",
+                    "BUTag": "NETMEDS",
+                    "EwaybillExpirationDate": "2021-05-24",
+                    "OriginStateCode": "HR",
+                    "DestinationStateCode": "CT",
+                    "ConsignorCode": "R812",
+                    "ConsigneeCode": "9424115815",
+                    "MovementType": "CON",
+                    "LegType": "JTC",
+                    "CNDIRECTION": "R"
+                }
+            ]
+        }
+        
+      
+    ],
+    "VehicleNumber": "CG13AB88066",
+    "public_hash": "076033ae5d25193a15bcfeb7cc2b7351a18ebdf49f6bf478c6343b3338430211",
+    "content_hash": "asdasdasdasd",
+    "req_id": "testkafkaup0025_C"
+}"""
+
+shipsy_create_order_body = shipsy_create_order_payload.replace("{order_id}", trip_id)
+
+shipsy_create_order_header = {"X-Public": "076033ae5d25193a15bcfeb7cc2b7351a18ebdf49f6bf478c6343b3338430211",
+                              "X-Hash": "ef8bd3b64421b59322a55f3d861dd72b3c8552c3166da3ef63f5e8b68a2aa64a",
+                              "Content-Type": "application/json"}
+
+shipsy_update_order_payload = """{
+    "TripId": "{order_id}",
+    "TripDetails": [
+        {
+            "SequenceNo": 0,
+            "Activity": "O",
+            "Loc": "13456",
+            "LocationName": "QWIK Supply Chain Private Ltd,Warehouse At Gd Logi Ring Rd No3 Nr Rail",
+            "contactNo": null,
+            "Name1": null,
+            "Address1": "QWIK Supply Chain Private Ltd,Warehouse At Gd Logi Ring Rd No3 Nr Rail",
+            "Address2": "Bridge Vlg Giroud Industrial Area Sil,",
+            "Address3": null,
+            "Pincode": "492001",
+            "Phone": "9029668326",
+            "Latitude": 21.2917,
+            "Longitude": 81.7036
+        },
+        {
+            "SequenceNo": 1,
+            "Activity": "P",
+            "Loc": "RPR001",
+            "LocationName": "Unnamed Road, Musra Khurd, Chh",
+            "contactNo": "7738847497",
+            "Name1": "Faishon house",
+            "Address1": "Unnamed Road, Musra Khurd, Chh",
+            "Address2": "null,India",
+            "Address3": null,
+            "Pincode": "491445",
+            "Phone": "9029668326",
+            "Latitude": 0,
+            "Longitude": 0,
+            "DirectDispatch":1,
+            "StageData": [
+                {
+                    "SequenceNo": 1,
+                    "ConsignmentNo": "CN001",
+                    "NumberOfHU": [
+                        "ITEM00",
+                        "ITEM01"
+                    ],
+                    "EwaybillFlag": null,
+                    "Netvalue": "2000",
+                    "amountToCollect": "1000",
+                    "BUTag": "NETMEDS",
+                    "EwaybillExpirationDate": "2021-05-24",
+                    "OriginStateCode": "HR",
+                    "DestinationStateCode": "CT",
+                    "ConsignorCode": "R812",
+                    "ConsigneeCode": "9424115815",
+                    "MovementType": "CON",
+                    "LegType": "JTC",
+                    "CNDIRECTION": "R"
+                }
+            ]
+        },
+        {
+            "SequenceNo": 2,
+            "Activity": "D",
+            "Loc": "RPR001",
+            "LocationName": "Unnamed Road, Musra Khurd, Chh",
+            "contactNo": "7738847497",
+            "Name1": "Faishon house",
+            "Address1": "Unnamed Road, Musra Khurd, Chh",
+            "Address2": "null,India",
+            "Address3": null,
+            "Pincode": "491445",
+            "Phone": "9029668326",
+            "Latitude": 0,
+            "Longitude": 0,
+            "DirectDispatch":0,
+            "StageData": [
+                {
+                    "SequenceNo": 2,
+                    "ConsignmentNo": "CN002",
+                    "NumberOfHU": [
+                        "ITEM02",
+                        "ITEM03"
+                    ],
+                    "EwaybillFlag": null,
+                    "Netvalue": "2000",
+                    "amountToCollect": "1000",
+                    "BUTag": "NETMEDS",
+                    "EwaybillExpirationDate": "2021-05-24",
+                    "OriginStateCode": "HR",
+                    "DestinationStateCode": "CT",
+                    "ConsignorCode": "R812",
+                    "ConsigneeCode": "9424115815",
+                    "MovementType": "CON",
+                    "LegType": "JTC",
+                    "CNDIRECTION": "R"
+                }
+            ]
+        },
+      {
+            "Activity": "D",
+            "Address1": "Unnamed Road, Musra Khurd, Chh",
+            "Address2": "null,India",
+            "Address3": null,
+            "contactNo": "7738847497",
+            "DirectDispatch": 0,
+            "Latitude": 0,
+            "Loc": "RPR001",
+            "LocationName": "Unnamed Road, Musra Khurd, Chh",
+            "Longitude": 0,
+            "Name1": "Faishon house",
+            "Phone": "9029668326",
+            "Pincode": "491445",
+            "SequenceNo": 3,
+            "StageData": [
+                {
+                    "amountToCollect": "1000",
+                    "BUTag": "NETMEDS",
+                    "CNDIRECTION": "R",
+                    "ConsigneeCode": "9424115815",
+                    "ConsignmentNo": "CN003",
+                    "ConsignorCode": "R812",
+                    "DestinationStateCode": "CT",
+                    "EwaybillExpirationDate": "2021-05-24",
+                    "EwaybillFlag": null,
+                    "LegType": "JTC",
+                    "MovementType": "CON",
+                    "Netvalue": "2000",
+                    "NumberOfHU": [
+                        "ITEM04",
+                        "ITEM05"
+                    ],
+                    "OriginStateCode": "HR",
+                    "SequenceNo": 3
+                }
+            ]
+        }
+      
+    ],
+    "VehicleNumber": "CG13AB88066",
+    "public_hash": "076033ae5d25193a15bcfeb7cc2b7351a18ebdf49f6bf478c6343b3338430211",
+    "content_hash": "asdasdasdasd",
+    "req_id": "testkafkaup0025_C"
+}"""
+
+shipsy_update_order_body = shipsy_update_order_payload.replace("{order_id}", trip_id)
+
+shipsy_update_order_header = {"X-Public": "076033ae5d25193a15bcfeb7cc2b7351a18ebdf49f6bf478c6343b3338430211",
+                              "X-Hash": "ef8bd3b64421b59322a55f3d861dd72b3c8552c3166da3ef63f5e8b68a2aa64a",
+                              "Content-Type": "application/json"}
+
+get_order_payload = '[{"callName":"pullOrders"},{"inputData":{"uName":"G157227","orderCategory":"1",' \
+                    '"merchant_id":"49050","bill_no":"AutomateDeliveryLICMV","appversion":"7.0.0.18",' \
+                    '"datetime":"1660904492074","runsheet":"0","areaid":"0","deviceImei":"27e72087721c16f3",' \
+                    '"manualPull":"1","uLat":"19.1605471","uLong":"73.2428719","appSource":"2",' \
+                    '"isBillWiseSearch":"0","isFilterTypeId":"3","sid":"c7fb6fc13126abf9c7d1d2c112cd2dac2af",' \
+                    '"clientId":"2460","bundleId":"com.grab.grabrider"}}]'
+
+get_order_header = {"X-Public": "a9b6886626ca9b4f5dc2391378e5a19dd0615e05369e9cba670ad20f1958086d",
+                    "X-Hash": "f39209496712d4764bcaba581444f17dc9e48bfbb3058ab02d15d01a64412a52",
+                    "Content-Type": "application/json"}

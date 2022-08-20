@@ -9,9 +9,10 @@ Library     database.py
 
 
 01. To check the working of Create Order API
-    log to console      \n Entering payload and calling the Create Order API
+    log to console      \n Entering payload and calling the Create Order API \n
     ${order_id} =       APIcalls.check_create_order
     log to console      ${order_id}
+    log to console      \n reading order logs please wait one minute
     Sleep   60 seconds
     @{create_order_logs}=    read_create_order_logs     webber     Pass@123
     ${flag}     APIcalls.string_contains    ${create_order_logs}[0]    Success Order Details : [{"res":{"message":"success","errorCode":"0","bulk_order_id":1,"pos_order_id":["${order_id}
@@ -22,6 +23,7 @@ Library     database.py
     ${order_id} =       APIcalls.check_update_order
     log to console      ${order_id}
     Sleep   60 seconds
+    log to console      \n reading order logs please wait one minute
     @{update_order_logs}=    read_update_order_logs     webber     Pass@123
     ${flag}     APIcalls.string_contains    ${update_order_logs}[0]    {"success":"true","errorCode":"0","errorDescription":"","order_id":"${order_id}
     Should be equal 	${flag}  ${true} 	The Update API is failed, please see the below logs \n${update_order_logs}[1]
@@ -74,7 +76,7 @@ Library     database.py
 
 12. To check working of Order Full Delivery Prepaid API
     log to console      \n Entering payload and calling the Full Delivery Prepaid API
-    @{response_order_full_delivery_prepaid} =   APIcalls.check_order_full_delivery_prepaid_api
+    @{response_order_full_delivery_prepaid} =       APIcalls.check_order_full_delivery_prepaid_api
     Should Be Equal     ${response_order_full_delivery_prepaid}[0]     success     Order full Delivery Prepaid API Failed, request response is ${response_order_full_delivery_prepaid}[1]
     log to console      The order full delivery prepaid API is successfully passed
 
@@ -82,13 +84,13 @@ Library     database.py
     log to console      \n checking the order status after the order full delivered (prepaid)
     ${order_status_in_DB} =         APIcalls.check_order_status_in_DB
     Should Be Equal     ${order_status_in_DB}     6     The order_status in the DB after the order is picked is not 6 but ${order_status_in_DB}
-
-14. To check the working of create order API in Shipsy
-    log to console      \n checking the working of Create Order API in Shipsy
-    @{response_create_order_shipsy} =       APIcalls.check_create_order_api_shipsy
-    Should Be Equal      ${response_create_order_shipsy}[0]    true    The Create order Shipsy API has failed and the response is ${response_create_order_shipsy}[1]
-
-15. To check the working of update order API in Shipsy
-    log to console      \n checking the working of Update Order API in Shipsy
-    @{response_update_order_shipsy} =       APIcalls.check_update_order_api_shipsy
-    Should Be Equal      ${response_update_order_shipsy}[0]    true    The Update Order Shipsy API has failed and the response is ${response_update_order_shipsy}[1]
+#
+#14. To check the working of create order API in Shipsy
+#    log to console      \n checking the working of Create Order API in Shipsy
+#    @{response_create_order_shipsy} =       APIcalls.check_create_order_api_shipsy
+#    Should Be Equal      ${response_create_order_shipsy}[0]    true    The Create order Shipsy API has failed and the response is ${response_create_order_shipsy}[1]
+#
+#15. To check the working of update order API in Shipsy
+#    log to console      \n checking the working of Update Order API in Shipsy
+#    @{response_update_order_shipsy} =       APIcalls.check_update_order_api_shipsy
+#    Should Be Equal      ${response_update_order_shipsy}[0]    true    The Update Order Shipsy API has failed and the response is ${response_update_order_shipsy}[1]

@@ -46,15 +46,25 @@ def check_login():
     response_login = requests.post(login_api, data=payload.login_payload, headers=payload.login_header).json()
     return [response_login["response"], response_login]
 
+def get_sid():
+    login_api = "https://sit.grab.in/grabriderapp"
+    response_login = requests.post(login_api, data=payload.login_payload, headers=payload.login_header).json()
+    sid = response_login["sid"]
+    return sid
+
 def check_checkin():
     checkin_api = "https://sit.grab.in/grabriderapp"
     print("Entering payload and calling the checkin API")
-    response_checkin = requests.post(checkin_api, data=payload.checkin_payload, headers=payload.checkin_header).json()
+    sid = get_sid()
+    checkin_data = payload.checkin_payload.replace("{id}", sid)
+    response_checkin = requests.post(checkin_api, data=checkin_data, headers=payload.checkin_header).json()
     return [response_checkin["response"], response_checkin]
 
 def check_get_order_api():
     get_order_api = "https://sit.grab.in/grabriderapp"
-    response_get_order = requests.post(get_order_api, data=payload.get_order_payload, headers=payload.get_order_header).json()
+    sid = get_sid()
+    get_order_body = payload.get_order_payload1.replace("{id}", sid)
+    response_get_order = requests.post(get_order_api, data=get_order_body, headers=payload.get_order_header).json()
     return [response_get_order["response"], response_get_order]
 
 def check_order_allocated_api():
@@ -67,9 +77,19 @@ def check_order_allocated_api():
                                              headers=payload.order_allocated_header).json()
     return [response_order_allocated["response"], response_order_allocated]
 
+def get_oid():
+    oid = database.B2C_execute_query(
+        "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
+    return oid[0][0]
+
 def check_order_status_in_DB():
     response = database.B2C_execute_query("SELECT order_status FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
     return str(response[0][0])
+
+def get_otp_from_DB():
+    response = database.B2C_execute_query("SELECT SUBSTRING((SELECT CAST(security_codes AS CHARACTER ) FROM tbl_order_main WHERE pos_order_id='Automation_Order_jriiwqeqnw'), 6 , 4)")
+    otp = response[0][0]
+    return otp
 
 def check_order_reached_api():
     order_reached_api = "https://sit.grab.in/grabriderapp"
@@ -83,23 +103,32 @@ def check_order_reached_api():
 
 def check_order_to_deliver_api():
     order_to_deliver_api = "https://sit.grab.in/grabriderapp"
-    print("Entering payload and calling the Order Reached API")
+    # print("Entering payload and calling the Order Reached API")
     oid = database.B2C_execute_query(
         "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
     # print(oid[0][0])
-    order_to_deliver_body = payload.order_to_deliver_payload.replace("{order_id}", str(oid[0][0]))
+    order_to_deliver_body1 = payload.order_to_deliver_payload1.replace("{oid}", str(oid[0][0]))
+    sid = get_sid()
+    order_to_deliver_body = order_to_deliver_body1.replace("{sid}", sid)
     response_order_to_deliver = requests.post(order_to_deliver_api, data=order_to_deliver_body,
                                            headers=payload.order_to_deliver_header).json()
     return [response_order_to_deliver["response"], response_order_to_deliver]
 
 def check_order_full_delivery_prepaid_api():
     order_full_delivery_prepaid_api = "https://sit.grab.in/grabriderapp"
-    print("Entering payload and calling the Order full delivery prepaid")
-    oid = database.B2C_execute_query(
-        "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
+    # print("Entering payload and calling the Order full delivery prepaid")
+    # oid = database.B2C_execute_query(
+    #     "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
     # print(oid[0][0])
-    order_full_delivery_prepaid_body = payload.order_full_delivery_prepaid_payload.replace("{order_id}", str(oid[0][0]))
-    response_order_full_delivery_prepaid = requests.post(order_full_delivery_prepaid_api, data=order_full_delivery_prepaid_body,
+    # otp = get_otp_from_DB()
+    # order_full_delivery_prepaid_body2 = payload.order_full_delivery_prepaid_payload1.replace("{oid}", "15000020129")
+    # # sid = get_sid()
+    # sid = "42329e6f3b7e2fd1748a1db105c6fc1b0cc"
+    # order_full_delivery_prepaid_body1 = order_full_delivery_prepaid_body2.replace("{sid}", sid)
+    # order_full_delivery_prepaid_body = order_full_delivery_prepaid_body1.replace("{otp}", "5907")
+    # print(order_full_delivery_prepaid_body)
+    # print(payload.order_full_delivery_prepaid_payload)
+    response_order_full_delivery_prepaid = requests.post(order_full_delivery_prepaid_api, data=payload.order_full_delivery_prepaid_payload,
                                            headers=payload.order_full_delivery_prepaid_header).json()
     return [response_order_full_delivery_prepaid[0]["responseValue"], response_order_full_delivery_prepaid]
 

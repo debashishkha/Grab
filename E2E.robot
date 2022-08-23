@@ -22,6 +22,7 @@ Library     database.py
     log to console      \n Entering payload and calling the Update Order API
     ${order_id} =       APIcalls.check_update_order
     log to console      ${order_id}
+    log to console      \n reading order logs please wait one minute
     Sleep   60 seconds
     log to console      \n reading order logs please wait one minute
     @{update_order_logs}=    read_update_order_logs     webber     Pass@123
@@ -85,12 +86,12 @@ Library     database.py
     ${order_status_in_DB} =         APIcalls.check_order_status_in_DB
     Should Be Equal     ${order_status_in_DB}     6     The order_status in the DB after the order is picked is not 6 but ${order_status_in_DB}
 #
-#14. To check the working of create order API in Shipsy
-#    log to console      \n checking the working of Create Order API in Shipsy
-#    @{response_create_order_shipsy} =       APIcalls.check_create_order_api_shipsy
-#    Should Be Equal      ${response_create_order_shipsy}[0]    true    The Create order Shipsy API has failed and the response is ${response_create_order_shipsy}[1]
-#
-#15. To check the working of update order API in Shipsy
-#    log to console      \n checking the working of Update Order API in Shipsy
-#    @{response_update_order_shipsy} =       APIcalls.check_update_order_api_shipsy
-#    Should Be Equal      ${response_update_order_shipsy}[0]    true    The Update Order Shipsy API has failed and the response is ${response_update_order_shipsy}[1]
+14. To check the working of create order API in Shipsy
+    log to console      \n checking the working of Create Order API in Shipsy
+    @{response_create_order_shipsy} =       APIcalls.check_create_order_api_shipsy
+    Should Be Equal      ${response_create_order_shipsy}[0]    true    The Create order Shipsy API has failed and the response is ${response_create_order_shipsy}[1]
+
+15. To check the working of update order API in Shipsy
+    log to console      \n checking the working of Update Order API in Shipsy
+    @{response_update_order_shipsy} =       APIcalls.check_update_order_api_shipsy
+    Should Be Equal      ${response_update_order_shipsy}[0]    true    The Update Order Shipsy API has failed and the response is ${response_update_order_shipsy}[1]

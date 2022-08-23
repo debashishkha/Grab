@@ -1,3 +1,5 @@
+import time
+
 import requests
 import payload
 import datetime as datetime
@@ -87,8 +89,8 @@ def check_order_status_in_DB():
     return str(response[0][0])
 
 def get_otp_from_DB():
-    response = database.B2C_execute_query("SELECT SUBSTRING((SELECT CAST(security_codes AS CHARACTER ) FROM tbl_order_main WHERE pos_order_id='Automation_Order_jriiwqeqnw'), 6 , 4)")
-    otp = response[0][0]
+    response = database.B2C_execute_query("SELECT SUBSTRING((SELECT CAST(security_codes AS CHARACTER ) FROM tbl_order_main WHERE pos_order_id='" + payload.trip_id + "'), 6 , 4)")
+    otp = response
     return otp
 
 def check_order_reached_api():
@@ -116,21 +118,22 @@ def check_order_to_deliver_api():
 
 def check_order_full_delivery_prepaid_api():
     order_full_delivery_prepaid_api = "https://sit.grab.in/grabriderapp"
-    # print("Entering payload and calling the Order full delivery prepaid")
-    # oid = database.B2C_execute_query(
-    #     "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
+    print("Entering payload and calling the Order full delivery prepaid")
+    oid = database.B2C_execute_query(
+        "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
     # print(oid[0][0])
-    # otp = get_otp_from_DB()
-    # order_full_delivery_prepaid_body2 = payload.order_full_delivery_prepaid_payload1.replace("{oid}", "15000020129")
-    # # sid = get_sid()
+    otp = get_otp_from_DB()
+    print(otp)
+    order_full_delivery_prepaid_body2 = payload.order_full_delivery_prepaid_payload1.replace("{oid}", str(oid[0][0]))
+    sid = get_sid()
     # sid = "42329e6f3b7e2fd1748a1db105c6fc1b0cc"
-    # order_full_delivery_prepaid_body1 = order_full_delivery_prepaid_body2.replace("{sid}", sid)
-    # order_full_delivery_prepaid_body = order_full_delivery_prepaid_body1.replace("{otp}", "5907")
-    # print(order_full_delivery_prepaid_body)
-    # print(payload.order_full_delivery_prepaid_payload)
-    response_order_full_delivery_prepaid = requests.post(order_full_delivery_prepaid_api, data=payload.order_full_delivery_prepaid_payload,
+    order_full_delivery_prepaid_body1 = order_full_delivery_prepaid_body2.replace("{sid}", sid)
+    order_full_delivery_prepaid_body = order_full_delivery_prepaid_body1.replace("{otp}", str(otp[0][0]))
+    print(order_full_delivery_prepaid_body)
+    print(payload.order_full_delivery_prepaid_payload)
+    response_order_full_delivery_prepaid = requests.post(order_full_delivery_prepaid_api, data=order_full_delivery_prepaid_body,
                                            headers=payload.order_full_delivery_prepaid_header).json()
-    return [response_order_full_delivery_prepaid[0]["responseValue"], response_order_full_delivery_prepaid]
+    return [response_order_full_delivery_prepaid["response"], response_order_full_delivery_prepaid]
 
 def check_create_order_api_shipsy():
     shipsy_create_order_api = "https://sit.grab.in/Clientapi/Digitalcalls/createtripforshipsy"

@@ -139,10 +139,10 @@ def check_create_order_api_shipsy():
     shipsy_create_order_api = "https://sit.grab.in/Clientapi/Digitalcalls/createtripforshipsy"
     response_create_order_api_shipsy = requests.post(shipsy_create_order_api, data=payload.shipsy_create_order_body,
                                        headers=payload.shipsy_create_order_header).json()
-    return [response_create_order_api_shipsy["success"], response_create_order_api_shipsy]
+    return [response_create_order_api_shipsy["success"], response_create_order_api_shipsy, payload.shipsy_trip_id]
 
 def check_update_order_api_shipsy():
     shipsy_update_order_api = "https://sit.grab.in/Clientapi/Digitalcalls/updatetripforshipsy"
     response_update_order_api_shipsy = requests.post(shipsy_update_order_api, data=payload.shipsy_update_order_body,
                                        headers=payload.shipsy_update_order_header).json()
-    return [response_update_order_api_shipsy["success"], response_update_order_api_shipsy]
+    return [response_update_order_api_shipsy["success"], response_update_order_api_shipsy, payload.shipsy_trip_id]

@@ -8,6 +8,8 @@ random_word = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5
 
 trip_id = 'AutomateDelivery' + str(random_word)
 
+shipsy_trip_id = 'AutoShipsy' + str(random_word)
+
 milliseconds = int(round(time.time() * 1000))
 
 create_headers = {'Content-Type': 'application/xml'}
@@ -301,7 +303,7 @@ shipsy_create_order_payload = """{
     "req_id": "testkafkaup0025_C"
 }"""
 
-shipsy_create_order_body = shipsy_create_order_payload.replace("{order_id}", trip_id)
+shipsy_create_order_body = shipsy_create_order_payload.replace("{order_id}", shipsy_trip_id)
 
 shipsy_create_order_header = {"X-Public": "076033ae5d25193a15bcfeb7cc2b7351a18ebdf49f6bf478c6343b3338430211",
                               "X-Hash": "ef8bd3b64421b59322a55f3d861dd72b3c8552c3166da3ef63f5e8b68a2aa64a",
@@ -447,7 +449,7 @@ shipsy_update_order_payload = """{
     "req_id": "testkafkaup0025_C"
 }"""
 
-shipsy_update_order_body = shipsy_update_order_payload.replace("{order_id}", trip_id)
+shipsy_update_order_body = shipsy_update_order_payload.replace("{order_id}", shipsy_trip_id)
 
 shipsy_update_order_header = {"X-Public": "076033ae5d25193a15bcfeb7cc2b7351a18ebdf49f6bf478c6343b3338430211",
                               "X-Hash": "ef8bd3b64421b59322a55f3d861dd72b3c8552c3166da3ef63f5e8b68a2aa64a",

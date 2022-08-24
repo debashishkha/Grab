@@ -32,6 +32,7 @@ Library     database.py
 03. To check the working of Login API
     log to console      \n Entering payload and calling the login API
     @{response_login} =  APIcalls.check_login
+    Log To Console    The SID is: ${response_login}[2]
     Should Be Equal     ${response_login}[0]     success     Login API Failed, request response is ${response_login}[1]
 
 04. To check the working of Checkin API

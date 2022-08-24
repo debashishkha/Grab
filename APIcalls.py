@@ -46,26 +46,27 @@ def check_login():
     login_api = "https://sit.grab.in/grabriderapp"
     print("Entering payload and calling the login API")
     response_login = requests.post(login_api, data=payload.login_payload, headers=payload.login_header).json()
-    return [response_login["response"], response_login]
-
-def get_sid():
-    login_api = "https://sit.grab.in/grabriderapp"
-    response_login = requests.post(login_api, data=payload.login_payload, headers=payload.login_header).json()
     sid = response_login["sid"]
-    return sid
+    return [response_login["response"], response_login, sid]
+
+# def get_sid():
+#     login_api = "https://sit.grab.in/grabriderapp"
+#     response_login = requests.post(login_api, data=payload.login_payload, headers=payload.login_header).json()
+#     sid = response_login["sid"]
+#     return sid
 
 def check_checkin():
     checkin_api = "https://sit.grab.in/grabriderapp"
     print("Entering payload and calling the checkin API")
-    sid = get_sid()
-    checkin_data = payload.checkin_payload.replace("{id}", sid)
+    sid = check_login()
+    checkin_data = payload.checkin_payload.replace("{id}", sid[2])
     response_checkin = requests.post(checkin_api, data=checkin_data, headers=payload.checkin_header).json()
     return [response_checkin["response"], response_checkin]
 
 def check_get_order_api():
     get_order_api = "https://sit.grab.in/grabriderapp"
-    sid = get_sid()
-    get_order_body = payload.get_order_payload1.replace("{id}", sid)
+    sid = check_login()
+    get_order_body = payload.get_order_payload1.replace("{id}", sid[2])
     response_get_order = requests.post(get_order_api, data=get_order_body, headers=payload.get_order_header).json()
     return [response_get_order["response"], response_get_order]
 
@@ -110,8 +111,8 @@ def check_order_to_deliver_api():
         "SELECT OID FROM tbl_order_main WHERE pos_order_id like '%" + payload.trip_id + "%'")
     # print(oid[0][0])
     order_to_deliver_body1 = payload.order_to_deliver_payload1.replace("{oid}", str(oid[0][0]))
-    sid = get_sid()
-    order_to_deliver_body = order_to_deliver_body1.replace("{sid}", sid)
+    sid = check_login()
+    order_to_deliver_body = order_to_deliver_body1.replace("{sid}", sid[2])
     response_order_to_deliver = requests.post(order_to_deliver_api, data=order_to_deliver_body,
                                            headers=payload.order_to_deliver_header).json()
     return [response_order_to_deliver["response"], response_order_to_deliver]
@@ -125,9 +126,9 @@ def check_order_full_delivery_prepaid_api():
     otp = get_otp_from_DB()
     print(otp)
     order_full_delivery_prepaid_body2 = payload.order_full_delivery_prepaid_payload1.replace("{oid}", str(oid[0][0]))
-    sid = get_sid()
+    sid = check_login()
     # sid = "42329e6f3b7e2fd1748a1db105c6fc1b0cc"
-    order_full_delivery_prepaid_body1 = order_full_delivery_prepaid_body2.replace("{sid}", sid)
+    order_full_delivery_prepaid_body1 = order_full_delivery_prepaid_body2.replace("{sid}", sid[2])
     order_full_delivery_prepaid_body = order_full_delivery_prepaid_body1.replace("{otp}", str(otp[0][0]))
     print(order_full_delivery_prepaid_body)
     print(payload.order_full_delivery_prepaid_payload)
